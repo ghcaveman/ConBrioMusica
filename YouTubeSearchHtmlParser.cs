@@ -137,7 +137,6 @@ namespace ConBrioMusica
             }
         }
 
-        //AIzaSyCx4_slB8NVQk8C_TwMgTa0w8yFv4FbrlY
         public static async Task GetVideoDetails(string videoId, string apiKey)
         {
             var youtubeService = new YouTubeService(new BaseClientService.Initializer()
