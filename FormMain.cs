@@ -69,6 +69,12 @@ namespace ConBrioMusica
                 }
                 song = song.Replace(" - ", "-");
                 string album = parser.GetAlbumName();
+                if (album == "Album Not Found")
+                {
+                    album = artist;
+                }
+
+
                 string release_date = parser.GetReleaseDate();
                 string description = parser.GetVideoDescription();
                 string embedUrl = parser.GetEmbedUrl();
@@ -117,9 +123,9 @@ namespace ConBrioMusica
                 {
                     url = url.Substring(0, index).Trim();
                 }
-                ModifyFile(full_path, title, url);
+                ModifyFile(full_path, title, url, album);
 
-                System.Windows.MessageBox.Show("Operation completed!");
+                //System.Windows.MessageBox.Show("Operation completed!");
             }
             catch (Exception ex)
             {
@@ -251,8 +257,9 @@ namespace ConBrioMusica
                     {
                         string title = searchResults[0].Title;
                         string url = searchResults[0].Url;
+                        string album = searchResults[0].Album;
                         string filename = destinationFolderTextBox.Text + "\\" + dataGridView1.Rows[e.RowIndex].Cells["Filename"].Value.ToString() + extensionLabel.Text;
-                        ModifyFile(filename, title, url);
+                        ModifyFile(filename, title, url, album);
                     }
                 }
                 catch (Exception ex)
@@ -288,7 +295,7 @@ namespace ConBrioMusica
             return output;
         }
 
-        private async void ModifyFile(string filename, string title, string url)
+        private async void ModifyFile(string filename, string title, string url, string album_in)
         {
             if (string.IsNullOrEmpty(url) != true)
             {
@@ -299,6 +306,10 @@ namespace ConBrioMusica
                 string artist = parser.GetArtistName();
                 string song = parser.GetSongName();
                 string album = parser.GetAlbumName();
+                if (album == "Album Not Found")
+                {
+                    album = album_in;
+                }
                 string release_date = parser.GetReleaseDate();
                 string description = parser.GetVideoDescription();
                 string embedUrl = parser.GetEmbedUrl();

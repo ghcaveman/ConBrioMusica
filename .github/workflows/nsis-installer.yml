@@ -1,0 +1,47 @@
+name: Build WinForms App & NSIS Installer
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+      with:
+        nuget-version: 'latest'
+
+    - name: Restore NuGet Packages
+      run: nuget restore ConBrioMusica.sln
+
+    # Compiles the WinForms app in Release mode
+    - name: Build Application
+      run: msbuild ConBrioMusica.sln /p:Configuration=Release /p:Platform="Any CPU"
+
+    # Sets up NSIS on the Windows runner
+    - name: Install NSIS
+      uses: negrutiu/nsis-install@v2
+      with:
+        version: '3.10'
+
+    # Compiles your installer script into an executable setup
+    - name: Compile NSIS Installer
+      run: makensis installer.nsi
+
+    # Uploads the finished setup package as a workflow artifact
+    - name: Upload Installer Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ConBrioMusica-Setup
+        path: ConBrioMusica-Setup.exe

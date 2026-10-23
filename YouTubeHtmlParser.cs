@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace ConBrioMusica
 {
@@ -135,6 +136,9 @@ namespace ConBrioMusica
         // Extracts the album name
         public string GetAlbumName()
         {
+            string filePath = @"C:\Users\gocav\source\repos\ConBrioMusica\html_parser.txt";
+            File.WriteAllText(filePath, _htmlDocument.DocumentNode.InnerHtml);
+
             // This information is usually present in the extra description metadata for official music videos
             var albumNode = _htmlDocument.DocumentNode.SelectNodes("//div[@id='watch-description-extra-info']//a")?
                                           .FirstOrDefault(node => node.InnerText.Contains("Album"))?.ParentNode;
@@ -145,14 +149,13 @@ namespace ConBrioMusica
                 // The exact path can vary greatly. This is a best guess.
                 return albumNode.InnerText.Replace("Album:", "").Trim();
             }
-
             // Look for schema.org data for "album"
             var albumMetaNode = _htmlDocument.DocumentNode.SelectSingleNode("//meta[@itemprop='album']/@content");
             if (albumMetaNode != null)
             {
                 return albumMetaNode.GetAttributeValue("content", "Album Not Found");
             }
-
+            //<a href="https://en.wikipedia.org/wiki/
             return "Album Not Found";
         }
 

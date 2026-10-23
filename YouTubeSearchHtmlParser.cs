@@ -23,6 +23,7 @@ namespace ConBrioMusica
     {
         public string Title { get; set; }
         public string Url { get; set; }
+        public string Album { get; set; }
         // Add more properties as needed, e.g., ThumbnailUrl, ChannelName, Views, etc.
     }
 
@@ -50,7 +51,8 @@ namespace ConBrioMusica
                     results.Add(new YouTubeSearchResult
                     {
                         Title = firstResult.Title,
-                        Url = firstResult.Url
+                        Url = firstResult.Url,
+                        Album = firstResult.Album
                     });
                 }
             }
@@ -106,7 +108,7 @@ namespace ConBrioMusica
         {
             //HtmlDocument htmlDoc = new HtmlDocument();
             //htmlDoc.LoadHtml(html);
-            string filePath = @"C:\Users\gocav\source\repos\ConBrioMusica\html_parse.txt";
+            string filePath = @"C:\Users\gocav\source\repos\ConBrioMusica\html_first_parse.txt";
             File.WriteAllText(filePath, html);
 
             // The exact XPath or CSS selector can change over time as websites update.
@@ -129,6 +131,39 @@ namespace ConBrioMusica
             {
                 // Extract the 'href' attribute which contains the video URL
                 return "watch?v=" + result;
+            }
+            else
+            {
+                Console.WriteLine("Could not find the first result node using the current XPath/CSS selector.");
+                return string.Empty;
+            }
+        }
+
+        
+        private static string ParseHtmlForAlbumName(string html)
+        {
+            string filePath = @"C:\Users\gocav\source\repos\ConBrioMusica\html_album_parse.txt";
+            File.WriteAllText(filePath, html);
+            // The exact XPath or CSS selector can change over time as websites update.
+            // A common selector for video links on YouTube search results is a link with id 'thumbnail'
+            //var firstResultNode = htmlDoc.DocumentNode.SelectSingleNode("//a[@id='href=\"www.youtube.com/watch']");
+            //href="https://www.youtube.com/watch?v=
+            //var firstResultingNode = htmlDoc.DocumentNode.SelectSingleNode("//div[@id='href=\"www.youtube.com/watch?v=']");
+            string fs = "album '";
+            string es = "'";
+            int pFrom = html.IndexOf(fs) + fs.Length;
+            String partOne = html.Substring(pFrom, html.Length - pFrom);
+
+            int pTo = partOne.IndexOf(es);
+
+            // String partTwo = partOne.Substring(0, pTo);
+            //pTo = partTwo.IndexOf(es);
+            String result = partOne.Substring(0, pTo);
+
+            if (result.Length > 0 && result.Length < 50)
+            {
+                // Extract the 'href' attribute which contains the video URL
+                return result;
             }
             else
             {
@@ -228,6 +263,8 @@ namespace ConBrioMusica
                 // Use HtmlAgilityPack to parse the source and find the first link
                 string firstResultLink = ParseHtmlForFirstResult(html);
 
+                string firstResultAlbum = ParseHtmlForAlbumName(html);
+
                 Console.WriteLine($"The first YouTube search result link is: {firstResultLink}");
                 var title = query.Replace('+', ' ');
 
@@ -235,7 +272,7 @@ namespace ConBrioMusica
                 var baseUri = new Uri("https://youtube.com");
                 var absoluteUri = new Uri(baseUri, firstResultLink).AbsoluteUri;
 
-                return new SearchResult { Title = title, Url = absoluteUri };
+                return new SearchResult { Title = title, Url = absoluteUri , Album = firstResultAlbum };
             }
 
             return null;
@@ -247,5 +284,6 @@ namespace ConBrioMusica
     {
         public string Title { get; set; }
         public string Url { get; set; }
+        public string Album { get; set; }
     }
 }
