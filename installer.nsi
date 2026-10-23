@@ -3,7 +3,9 @@
 
 Name "${APPNAME}"
 OutFile "ConBrioMusica-Setup.exe"
-InstallDir "$PROGRAMFILES\${APPNAME}"
+
+; Target the native 64-bit Program Files directory
+InstallDir "$PROGRAMFILES64\${APPNAME}"
 RequestExecutionLevel admin
 
 Page directory
@@ -16,16 +18,7 @@ Section "Install"
   File "bin\Release\ConBrioMusica.exe"
   File "bin\Release\ConBrioMusica.exe.config"
   
-  ; Include any extra dependency DLLs built into your release directory
-  ; File "bin\Release\*.dll"
-
-  ; Optional: Bundle required items if they are present in your workspace
-  ; SetOutPath "$INSTDIR\dependencies"
-  ; File "bin\Release\chromedriver.exe"
-
   WriteUninstaller "$INSTDIR\uninstall.exe"
-  
-  ; Create a Start Menu shortcut
   CreateShortcut "$SMPROGRAMS\${APPNAME}.lnk" "$INSTDIR\ConBrioMusica.exe"
 SectionEnd
 
