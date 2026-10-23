@@ -46,29 +46,29 @@ jobs:
         name: ConBrioMusica-Installer-${{ github.ref_name }}
         path: ConBrioMusica-Setup-${{ github.ref_name }}.exe
 
-    create-release:
-      needs: build
-      if: startsWith(github.ref, 'refs/tags/')
-      runs-on: ubuntu-latest
-      permissions:
-        contents: write
+  create-release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
-      steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Download Built Installer Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ConBrioMusica-Installer-${{ needs.build.outputs.tag_name }}
-          path: ./artifacts
+    - name: Download Built Installer Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ConBrioMusica-Installer-${{ needs.build.outputs.tag_name }}
+        path: ./artifacts
 
-      Tar-gz or binary asset allocation to GitHub Release
-      - name: Create GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${{ needs.build.outputs.tag_name }}" \
-            ./artifacts/ConBrioMusica-Setup-${{ needs.build.outputs.tag_name }}.exe \
-            --title "Release ${{ needs.build.outputs.tag_name }}" \
-            --generate-notes
+    # Tar-gz or binary asset allocation to GitHub Release
+    - name: Create GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create "${{ needs.build.outputs.tag_name }}" \
+          ./artifacts/ConBrioMusica-Setup-${{ needs.build.outputs.tag_name }}.exe \
+          --title "Release ${{ needs.build.outputs.tag_name }}" \
+          --generate-notes
